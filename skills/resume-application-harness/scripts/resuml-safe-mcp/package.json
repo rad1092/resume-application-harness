@@ -1,0 +1,27 @@
+{
+  "name": "resume-safe-resuml-mcp",
+  "version": "1.0.0",
+  "description": "Local-computation, advisory MCP wrapper around resuml for English resume validation and ATS checks.",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rad1092/resume-application-harness.git",
+    "directory": "skills/resume-application-harness/scripts/resuml-safe-mcp"
+  },
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node self_test.mjs"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "@jsonresume/schema": "1.2.1",
+    "@modelcontextprotocol/sdk": "1.29.0",
+    "resuml": "3.2.0",
+    "yaml": "2.8.3",
+    "zod": "4.3.6"
+  }
+}

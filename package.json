@@ -1,0 +1,17 @@
+{
+  "name": "resume-application-harness-repository",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Public repository and test runner for the Korean resume application Codex skill.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "test": "npm run test:korean && npm run test:harness",
+    "test:korean": "node skills/resume-application-harness/scripts/korean_application_self_test.mjs",
+    "test:harness": "node skills/resume-application-harness/scripts/resume_harness_self_test.mjs",
+    "test:resuml": "npm --prefix skills/resume-application-harness/scripts/resuml-safe-mcp ci --ignore-scripts --omit=optional && npm --prefix skills/resume-application-harness/scripts/resuml-safe-mcp test",
+    "test:all": "npm test && npm run test:resuml"
+  }
+}
