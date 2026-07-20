@@ -21,7 +21,7 @@
     "@jsonresume/schema": "1.2.1",
     "@modelcontextprotocol/sdk": "1.29.0",
     "resuml": "3.2.0",
-    "yaml": "2.8.3",
+    "yaml": "2.9.0",
     "zod": "4.3.6"
   }
 }
