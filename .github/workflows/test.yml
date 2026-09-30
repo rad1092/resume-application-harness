@@ -2,18 +2,36 @@ name: test
 
 on:
   push:
+    branches: [main]
+    paths-ignore:
+      - '**/*.md'
+      - 'LICENSE*'
   pull_request:
+    paths-ignore:
+      - '**/*.md'
+      - 'LICENSE*'
+  workflow_dispatch:
+    inputs:
+      scope:
+        description: Standard coverage, all supported Node versions, or Windows only
+        type: choice
+        default: standard
+        options: [standard, full, windows]
 
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   node-tests:
+    timeout-minutes: 10
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
-        node: [20, 22, 24]
+        include: ${{ fromJSON(inputs.scope == 'windows' && '[{"os":"windows-latest","node":22}]' || inputs.scope == 'full' && '[{"os":"ubuntu-latest","node":20},{"os":"ubuntu-latest","node":22},{"os":"ubuntu-latest","node":24},{"os":"windows-latest","node":22}]' || '[{"os":"ubuntu-latest","node":22},{"os":"windows-latest","node":22}]') }}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -27,12 +45,14 @@ jobs:
       - name: Install locked optional MCP dependencies and test
         run: npm run test:resuml
   dependency-audit:
+    if: inputs.scope != 'windows'
+    timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
           cache-dependency-path: skills/resume-application-harness/scripts/resuml-safe-mcp/package-lock.json
       - name: Reject tracked dependency installations

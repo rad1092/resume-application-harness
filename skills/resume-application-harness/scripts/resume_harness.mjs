@@ -640,8 +640,10 @@ function privacyCheck(project) {
   const rootResult = git(project, ["rev-parse", "--show-toplevel"]);
   let gitRoot = null;
   if (rootResult.status === 0 && rootResult.stdout) {
-    gitRoot = path.resolve(rootResult.stdout);
-    const relativeHarness = path.relative(gitRoot, root).replaceAll("\\", "/");
+    // Git and Node may spell the same Windows temp directory differently
+    // (8.3 aliases), or reach it through a symlink. Compare physical paths.
+    gitRoot = fs.realpathSync(rootResult.stdout);
+    const relativeHarness = path.relative(gitRoot, fs.realpathSync(root)).replaceAll("\\", "/");
     const tracked = git(gitRoot, ["ls-files", "--", relativeHarness]);
     const staged = git(gitRoot, ["diff", "--cached", "--name-only", "--", relativeHarness]);
     if (tracked.stdout) errors.push({ code: "RESUME_DATA_TRACKED_BY_GIT", files: tracked.stdout.split(/\r?\n/) });

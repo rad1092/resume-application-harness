@@ -266,6 +266,15 @@ try {
   assert.equal(report.valid, true);
   assert.equal(report.warnings.some((item) => item.code === "HARNESS_NOT_GIT_IGNORED"), false);
 
+  const linkedProject = path.join(sandbox, "linked-project");
+  fs.symlinkSync(project, linkedProject, process.platform === "win32" ? "junction" : "dir");
+  result = run(["privacy-check", "--project", linkedProject]);
+  assert.equal(result.status, 0, result.stderr);
+  report = parseReport(result);
+  assert.equal(report.valid, true);
+  assert.equal(report.warnings.some((item) => item.code === "HARNESS_NOT_GIT_IGNORED"), false);
+  tests.push("privacy-check resolves Git and harness directory aliases before checking ignore rules");
+
   const envFile = path.join(project, ".resume-harness", "review-secret.env");
   fs.writeFileSync(envFile, 'api_key="dummy_release_review_secret_123456"\n', "utf8");
   result = run(["privacy-check", "--project", project]);
